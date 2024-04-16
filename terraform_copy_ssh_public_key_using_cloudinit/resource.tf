@@ -1,7 +1,6 @@
 resource "lxd_instance" "example" {
   name     = "example-container"
-  image    = "images:ubuntu/20.04"
-  profiles = ["default"]
+  image    = "ubuntu-daily:22.04"
 
   config = {
     "user.user-data" = <<-EOF

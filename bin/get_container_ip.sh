@@ -1,6 +1,8 @@
 #!/bin/bash
+# Installation: You can paste this function in your terminal or in .bashrc file
+# or you can run: source bin/get_container_ip.sh
 # Usage:
-#   lxc 
+#   ssh ubuntu@"$(get_container_ip example-container)" cat .ssh/authorized_keys
 function get_container_ip() {
     container_name="$1"  # Get the container name from function argument
 

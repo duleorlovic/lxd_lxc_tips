@@ -4,6 +4,7 @@
 provider "registry.terraform.io/terraform-lxd/lxd" {
   version = "2.0.0"
   hashes = [
+    "h1:TgLkGk8Bk1/pr1ssvKmPHpPM1L31hDAT0foBqyLWwOU=",
     "h1:ZMmIj3HvaQaWP9Z2ym0Sx/Fp62j3uL42cVY3zVsQASM=",
     "zh:0440cfecc72df4b33f5e93afc1c7d4e6d670e7c2b693ec6e84292b1bf13cb450",
     "zh:10e527049ebb2e0a118f3e9bf8b2ad4d780b9cf59a446fca67cdacfa6a5858e3",
