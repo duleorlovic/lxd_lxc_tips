@@ -19,8 +19,10 @@ lxc launch ubuntu:22.04 ubuntu
 # start as virtual VM with --vm
 lxc launch ubuntu:22.04 ubuntu-vm --vm
 
-# duplicate copy
+# duplicate instance ie copy
 lxc copy ubuntu second
+
+# lxc init buntu:22.04
 
 lxc list
 
@@ -28,9 +30,18 @@ lxc info ubuntu
 lxc stop ubuntu
 lxc start ubuntu
 lxc delete ubuntu
+# or similar remove
+lxc rm -f ubuntu
+
+# alias, for example ip address of ubuntu
+lxc alias add list-myname "list --format json | jq '.[] | select(.name == \"MyName\")'"
+lxc alias add ip-ubuntu "list --format json | jq '.[] | select(.name == \"ubuntu\") | .state.network.eth0.addresses[] | select(.family == \"inet\").address'"
 
 # run command on instance
 lxc exec ubuntu -- free -m
+
+# open shell, same as lxc exec ubuntu -- bash
+lxc shell ubuntu
 
 # pull files
 lxc file pull ubuntu/etc/hosts .
@@ -90,7 +101,10 @@ Client certificate now trusted by server: power_lxc
 
 lxc remote switch power_lxc
 lxc remote get-default
+# power_lxc
 
+lxc list
+# show the list of containers on power
 ```
 
 ## NIC Network
