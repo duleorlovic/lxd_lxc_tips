@@ -27,6 +27,8 @@ lxc copy ubuntu second
 lxc list
 
 lxc info ubuntu
+lxc config show ubuntu | grep description:
+
 lxc stop ubuntu
 lxc start ubuntu
 lxc delete ubuntu
