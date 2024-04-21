@@ -158,3 +158,29 @@ lxc list
 ## NIC Network
 
 https://documentation.ubuntu.com/lxd/en/latest/howto/instances_routed_nic_vm/
+
+# Maas
+
+https://multipass.run/install
+
+Install multipass
+```
+sudo snap install multipass
+```
+
+Commands
+```
+multipass list
+
+multipass stop foo
+multipass start foo
+multipass delete foo
+multipass purge foo
+```
+
+Pass cloud init
+```
+multipass launch -n bar --cloud-init cloud-config.yaml
+```
+
+TODO: https://maas.io/tutorials/build-a-maas-and-lxd-environment-in-30-minutes-with-multipass-on-ubuntu#4-check-whether-virtualisation-is-working
