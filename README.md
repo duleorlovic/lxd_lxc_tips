@@ -1,4 +1,7 @@
-# First Steps
+# LXD LXC
+
+First Steps
+
 https://documentation.ubuntu.com/lxd/en/latest/tutorial/first_steps/
 
 ```
@@ -63,19 +66,62 @@ Configure options
 https://documentation.ubuntu.com/lxd/en/latest/howto/instances_configure/#instances-configure
 https://documentation.ubuntu.com/lxd/en/latest/reference/instance_options/#instance-options
 https://documentation.ubuntu.com/lxd/en/latest/explanation/instance_config/#instance-config
+We can configure instance options
 ```
 # show config
 lxc config show ubuntu
+lxc config show ubuntu --expanded
+lxc config show ubuntu | grep "^description:"
+
+# show description for all containers
+lxc list -c n --format csv | while read container; do echo "Configuration for $container:"; lxc config show "$container"|grep "^description"; echo "----------"; done
 
 # limit memory (default if 1GB)
 lxc config set ubuntu limits.memory=128MiB
 lxc exec ubuntu -- free -m
-
-# override disk size (default if 10GB)
-lxc config device override ubuntu-vm root size=30GiB
-lxc restart ubuntu-vm
-lxc exec ubuntu-vm -- df -h
 ```
+
+We can configure instance properties using `--property` flag using `set`,
+`unset` and `get`
+```
+lxc onfig set <instance_name> <property_key>=<property_value> --property
+```
+
+And we can configure device `config device add`, `config devise set`, override
+```
+lxc config device add <instance_name> <device_name> <device_type> <device_option_key>=<device_option_value>
+```
+override disk size (default if 10GB)
+```
+lxc config device override ubuntu root size=30GiB
+lxc restart ubuntu
+lxc exec ubuntu -- df -h
+```
+
+# Profile
+
+https://documentation.ubuntu.com/lxd/en/latest/profiles/
+If not specified, `default` profile is used and it defines a network interface
+and root disk.
+```
+lxc profile list
+lxc profile show <profile_name>
+lxc profile create <profile_name>
+lxc profile edit <profile_name>
+lxc profile set <profile_name> <option_key>=<option_value> <option_key>=<option_value>
+lxc profile device add <profile_name> <device_name> <device_type> <device_option_key>=<device_option_value> <device_option_key>=<device_option_value>
+# if device already exists in profile
+lxc profile device set <profile_name> <device_name> <device_option_key>=<device_option_value> <device_option_key>=<device_option_value>
+```
+
+Apply profile to instance
+```
+lxc profile add <instance_name> <profile_name>
+# or when launching
+lxc launch <image> <instance_name> --profile <profile_name> --profile <profile_name>
+```
+
+
 
 ## UI Server remote access
 

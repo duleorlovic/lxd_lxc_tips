@@ -1,0 +1,7 @@
+# lxc profile edit install_package < profile_user_data/install_package.yaml
+# lxc profile add <instance_name> install_package
+# lxc profile edit install_package
+user.user_data: |-
+  #cloud-config
+  packages:
+    - sl
