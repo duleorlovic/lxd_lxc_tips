@@ -17,7 +17,7 @@ lxc image list ubuntu: 22.04 architecture=$(uname -m)
 Commands
 ```
 # Start instance as container
-lxc launch ubuntu:22.04 ubuntu
+lxc launch ubuntu:22.04 my_instance_name
 
 # start as virtual VM with --vm
 lxc launch ubuntu:22.04 ubuntu-vm --vm
@@ -29,35 +29,35 @@ lxc copy ubuntu second
 
 lxc list
 
-lxc info ubuntu
-lxc config show ubuntu | grep description:
+lxc info my_instance_name
+lxc config show my_instance_name | grep description:
 
-lxc stop ubuntu
-lxc start ubuntu
-lxc delete ubuntu
+lxc stop my_instance_name
+lxc start my_instance_name
+lxc delete my_instance_name
 # or similar remove
-lxc rm -f ubuntu
+lxc rm -f my_instance_name
 
-# alias, for example ip address of ubuntu
+# alias, for example ip address of my_instance_name
 lxc alias add list-myname "list --format json | jq '.[] | select(.name == \"MyName\")'"
-lxc alias add ip-ubuntu "list --format json | jq '.[] | select(.name == \"ubuntu\") | .state.network.eth0.addresses[] | select(.family == \"inet\").address'"
+lxc alias add ip-ubuntu "list --format json | jq '.[] | select(.name == \"my_instance_name\") | .state.network.eth0.addresses[] | select(.family == \"inet\").address'"
 
 # run command on instance
-lxc exec ubuntu -- free -m
+lxc exec my_instance_name -- free -m
 
-# open shell, same as lxc exec ubuntu -- bash
-lxc shell ubuntu
+# open shell, same as lxc exec my_instance_name -- bash
+lxc shell my_instance_name
 
 # pull files
-lxc file pull ubuntu/etc/hosts .
+lxc file pull my_instance_name/etc/hosts .
 
 # copy to machine
-lxc file push hosts ubuntu/etc/hosts
+lxc file push hosts my_instance_name/etc/hosts
 
 
 # create snapshot
-lxc snapshot ubuntu my-snap
-lxc restore ubuntu my-snap
+lxc snapshot my_instance_name my-snap
+lxc restore my_instance_name my-snap
 ```
 
 # Configure
@@ -69,33 +69,36 @@ https://documentation.ubuntu.com/lxd/en/latest/explanation/instance_config/#inst
 We can configure instance options
 ```
 # show config
-lxc config show ubuntu
-lxc config show ubuntu --expanded
-lxc config show ubuntu | grep "^description:"
+lxc config show my_instance_name
+lxc config show my_instance_name --expanded
+lxc config show my_instance_name | grep "^description:"
 
 # show description for all containers
 lxc list -c n --format csv | while read container; do echo "Configuration for $container:"; lxc config show "$container"|grep "^description"; echo "----------"; done
 
 # limit memory (default if 1GB)
-lxc config set ubuntu limits.memory=128MiB
-lxc exec ubuntu -- free -m
+lxc config set my_instance_name limits.memory=128MiB
+lxc exec my_instance_name -- free -m
+
+# if you run docker under image
+lxc config set my_instance_name security.nesting true
 ```
 
 We can configure instance properties using `--property` flag using `set`,
 `unset` and `get`
 ```
-lxc onfig set <instance_name> <property_key>=<property_value> --property
+lxc onfig set my_instance_name <property_key>=<property_value> --property
 ```
 
 And we can configure device `config device add`, `config devise set`, override
 ```
-lxc config device add <instance_name> <device_name> <device_type> <device_option_key>=<device_option_value>
+lxc config device add my_instance_name my_device_name <device_type> <device_option_key>=<device_option_value>
 ```
 override disk size (default if 10GB)
 ```
-lxc config device override ubuntu root size=30GiB
-lxc restart ubuntu
-lxc exec ubuntu -- df -h
+lxc config device override my_instance_name root size=30GiB
+lxc restart my_instance_name
+lxc exec my_instance_name -- df -h
 ```
 
 # Profile
@@ -105,21 +108,35 @@ If not specified, `default` profile is used and it defines a network interface
 and root disk.
 ```
 lxc profile list
-lxc profile show <profile_name>
-lxc profile create <profile_name>
-lxc profile edit <profile_name>
-lxc profile set <profile_name> <option_key>=<option_value> <option_key>=<option_value>
-lxc profile device add <profile_name> <device_name> <device_type> <device_option_key>=<device_option_value> <device_option_key>=<device_option_value>
+lxc profile show my_profile_name
+lxc profile create my_profile_name
+lxc profile delete my_profile_name
+lxc profile edit my_profile_name
+
+lxc profile set my_profile_name <option_key>=<option_value> <option_key>=<option_value>
+
+lxc profile device add my_profile_name my_device_name <device_type> <device_option_key>=<device_option_value> <device_option_key>=<device_option_value>
+lxc profile device add mainlan eth0 nic nictype=bridged parent=bridge0 # bridge0 is host device
+
 # if device already exists in profile
-lxc profile device set <profile_name> <device_name> <device_option_key>=<device_option_value> <device_option_key>=<device_option_value>
+lxc profile device set my_profile_name my_device_name <device_option_key>=<device_option_value> <device_option_key>=<device_option_value>
 ```
 
 Apply profile to instance
 ```
-lxc profile add <instance_name> <profile_name>
+lxc profile add my_instance my_profile_name
 # or when launching
-lxc launch <image> <instance_name> --profile <profile_name> --profile <profile_name>
+lxc launch ubuntu:22.04 my_instance_name --profile default --profile my_profile_name
 ```
+
+https://documentation.ubuntu.com/lxd/en/latest/cloud-init/
+Cloud config user data can be added to profile, note that it is with dash not
+underscore `config: cloud-init.user-data: #cloud-config ` (not `user_data`)
+Cloud init can be passed as `vendor-data` and `user-data` and `network-config`
+https://documentation.ubuntu.com/lxd/en/latest/cloud-init/#how-to-specify-network-configuration-data
+Example is in `profile_user_data/install_package.yaml` and
+`profile_network_config/add_routed_nic_device.yaml`
+
 
 
 

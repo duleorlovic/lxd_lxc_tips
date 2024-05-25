@@ -1,7 +1,10 @@
-# lxc profile edit install_package < profile_user_data/install_package.yaml
-# lxc profile add <instance_name> install_package
-# lxc profile edit install_package
-user.user_data: |-
-  #cloud-config
-  packages:
-    - sl
+# lxc profile create my_profile_name
+# lxc profile edit my_profile_name < profile_user_data/install_package.yaml
+# lxc profile show my_profile_name
+# lxc profile add my_instance_name my_profile_name
+config:
+  cloud-init.user-data: |-
+    #cloud-config
+    package_upgrade: true
+    packages:
+      - sl
