@@ -17,7 +17,7 @@ lxc image list ubuntu: 22.04 architecture=$(uname -m)
 Commands
 ```
 # Start instance as container
-lxc launch ubuntu:22.04 my_instance_name
+lxc launch ubuntu:22.04 my-instance
 
 # start as virtual VM with --vm
 lxc launch ubuntu:22.04 ubuntu-vm --vm
@@ -29,35 +29,35 @@ lxc copy ubuntu second
 
 lxc list
 
-lxc info my_instance_name
-lxc config show my_instance_name | grep description:
+lxc info my-instance
+lxc config show my-instance | grep description:
 
-lxc stop my_instance_name
-lxc start my_instance_name
-lxc delete my_instance_name
+lxc stop my-instance
+lxc start my-instance
+lxc delete my-instance
 # or similar remove
-lxc rm -f my_instance_name
+lxc rm -f my-instance
 
-# alias, for example ip address of my_instance_name
+# alias, for example ip address of my-instance
 lxc alias add list-myname "list --format json | jq '.[] | select(.name == \"MyName\")'"
-lxc alias add ip-ubuntu "list --format json | jq '.[] | select(.name == \"my_instance_name\") | .state.network.eth0.addresses[] | select(.family == \"inet\").address'"
+lxc alias add ip-ubuntu "list --format json | jq '.[] | select(.name == \"my-instance\") | .state.network.eth0.addresses[] | select(.family == \"inet\").address'"
 
 # run command on instance
-lxc exec my_instance_name -- free -m
+lxc exec my-instance -- free -m
 
-# open shell, same as lxc exec my_instance_name -- bash
-lxc shell my_instance_name
+# open shell, same as lxc exec my-instance -- bash
+lxc shell my-instance
 
 # pull files
-lxc file pull my_instance_name/etc/hosts .
+lxc file pull my-instance/etc/hosts .
 
 # copy to machine
-lxc file push hosts my_instance_name/etc/hosts
+lxc file push hosts my-instance/etc/hosts
 
 
 # create snapshot
-lxc snapshot my_instance_name my-snap
-lxc restore my_instance_name my-snap
+lxc snapshot my-instance my-snap
+lxc restore my-instance my-snap
 ```
 
 # Configure
@@ -69,36 +69,36 @@ https://documentation.ubuntu.com/lxd/en/latest/explanation/instance_config/#inst
 We can configure instance options
 ```
 # show config
-lxc config show my_instance_name
-lxc config show my_instance_name --expanded
-lxc config show my_instance_name | grep "^description:"
+lxc config show my-instance
+lxc config show my-instance --expanded
+lxc config show my-instance | grep "^description:"
 
 # show description for all containers
 lxc list -c n --format csv | while read container; do echo "Configuration for $container:"; lxc config show "$container"|grep "^description"; echo "----------"; done
 
 # limit memory (default if 1GB)
-lxc config set my_instance_name limits.memory=128MiB
-lxc exec my_instance_name -- free -m
+lxc config set my-instance limits.memory=128MiB
+lxc exec my-instance -- free -m
 
 # if you run docker under image
-lxc config set my_instance_name security.nesting true
+lxc config set my-instance security.nesting true
 ```
 
 We can configure instance properties using `--property` flag using `set`,
 `unset` and `get`
 ```
-lxc onfig set my_instance_name <property_key>=<property_value> --property
+lxc config set my-instance <property_key>=<property_value> --property
 ```
 
 And we can configure device `config device add`, `config devise set`, override
 ```
-lxc config device add my_instance_name my_device_name <device_type> <device_option_key>=<device_option_value>
+lxc config device add my-instance my_device_name <device_type> <device_option_key>=<device_option_value>
 ```
 override disk size (default if 10GB)
 ```
-lxc config device override my_instance_name root size=30GiB
-lxc restart my_instance_name
-lxc exec my_instance_name -- df -h
+lxc config device override my-instance root size=30GiB
+lxc restart my-instance
+lxc exec my-instance -- df -h
 ```
 
 # Profile
@@ -126,7 +126,7 @@ Apply profile to instance
 ```
 lxc profile add my_instance my_profile_name
 # or when launching
-lxc launch ubuntu:22.04 my_instance_name --profile default --profile my_profile_name
+lxc launch ubuntu:22.04 my-instance --profile default --profile my_profile_name
 ```
 
 https://documentation.ubuntu.com/lxd/en/latest/cloud-init/
