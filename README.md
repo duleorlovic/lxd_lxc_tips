@@ -18,6 +18,8 @@ Commands
 ```
 # Start instance as container
 lxc launch ubuntu:22.04 my-instance
+lxc exec  my-instance ping 1.1.1.1
+# if you do not have internet access check error
 
 # start as virtual VM with --vm
 lxc launch ubuntu:22.04 ubuntu-vm --vm
@@ -60,6 +62,19 @@ lxc snapshot my-instance my-snap
 lxc restore my-instance my-snap
 ```
 
+## No internet outside connection
+
+When instance get correct ip address and route and you can ping default gateway
+from vm you need to add ip table rules, (change eth0 with your host nic)
+```
+sudo iptables -A FORWARD -s 10.81.0.0/16 -j ACCEPT
+sudo iptables -t nat -A POSTROUTING -s 10.81.0.0/16 -o eth0 -j MASQUERADE
+sudo iptables -A FORWARD -s 10.81.0.0/16 -j ACCEPT
+sudo iptables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+
+# save changes
+sudo apt-get install iptables-persistent
+```
 # Configure
 
 Configure options
