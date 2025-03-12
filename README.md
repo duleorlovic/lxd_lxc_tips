@@ -69,8 +69,19 @@ from vm you need to add ip table rules, (change eth0 with your host nic)
 ```
 sudo iptables -A FORWARD -s 10.81.0.0/16 -j ACCEPT
 sudo iptables -t nat -A POSTROUTING -s 10.81.0.0/16 -o eth0 -j MASQUERADE
-sudo iptables -A FORWARD -s 10.81.0.0/16 -j ACCEPT
+
+# or different ip range, based on lxdbr0, and different network interface name
+sudo iptables -A FORWARD -s 10.136.8.0/24 -j ACCEPT
+sudo iptables -t nat -A POSTROUTING -s 10.136.8.0/24 -o enp5s0 -j MASQUERADE
+
 sudo iptables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+
+# check the rules
+sudo iptables -L FORWARD
+Chain FORWARD (policy DROP)
+target     prot opt source               destination
+ACCEPT     all  --  10.136.8.0/24        anywhere
+ACCEPT     all  --  anywhere             anywhere             ctstate RELATED,ESTABLISHED
 
 # save changes
 sudo apt-get install iptables-persistent
